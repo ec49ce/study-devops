@@ -1,0 +1,47 @@
+---
+- name: Configure servers
+  hosts: all
+  become: true
+  # gather_facts: false
+
+  tasks:
+  - name: Install epel-release for CentOS
+    ansible.builtin.yum:
+      name: epel-release
+      state: latest
+    when:
+      - ansible_facts['distribution'] == 'CentOS'
+
+  - name: Update repo index for Debian
+    ansible.builtin.apt:
+      update_cache: true
+      cache_valid_time: 432000
+    when:
+      - ansible_facts['os_family'] == 'Debian'
+
+  - name: Install httpd
+    ansible.builtin.package:
+      name:
+        - httpd
+      state: latest
+    when:
+      - ansible_facts['distribution'] == 'CentOS'
+  
+  - name: Install apache
+    ansible.builtin.package:
+      name:
+        - apache2
+      state: latest
+    when:
+      - ansible_facts['os_family'] == 'Debian'
+
+  - name: Run apache server
+    service: name=httpd state=started
+    when:
+      - ansible_facts['distribution'] == 'CentOS'
+
+  - name: Run apache server
+    service: name=apache2 state=started
+    when:
+      - ansible_facts['os_family'] == 'Debian'
+

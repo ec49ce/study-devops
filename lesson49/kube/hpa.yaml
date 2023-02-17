@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  nginx
+  namespace: default
+  labels:
+    app:  nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  nginx
+    spec:
+      containers:
+      - name:  nginx
+        image:  nginx:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort:  80
+          name:  nginx
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+  - name: nginx
+    protocol: TCP
+    port: 8080
+    targetPort: 80
+    nodePort: 30100
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

@@ -1,0 +1,7 @@
+zabbixweb:
+  service:
+    type: NodePort
+    nodePort: 30100
+
+zabbixwebservice:
+  enabled: false

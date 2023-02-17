@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels: &wordpress
+    app: php
+    project: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels: *wordpress
+  template:
+    metadata:
+      labels: *wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: wordpress:6.0.0-apache
+        envFrom:
+        - configMapRef:
+            name: wordpress
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: wordpress-data
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-data
+        persistentVolumeClaim:
+          claimName: wordpress-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-data
+spec:
+  storageClassName: standard-slow
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wordpress
+data:
+  WORDPRESS_DB_HOST: mysql.default.svc.cluster.local
+  WORDPRESS_DB_USER: admin
+  WORDPRESS_DB_PASSWORD: password
+  WORDPRESS_DB_NAME: wordpress
+  WORDPRESS_TABLE_PREFIX: wp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels: &wordpress
+    app: php
+    project: wordpress
+spec:
+  selector: *wordpress
+  ports:
+  - port: 80
+    targetPort: 80
+
+
+
+
+

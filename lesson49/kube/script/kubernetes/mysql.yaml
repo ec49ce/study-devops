@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels: &wordpress-mysql
+    app: "$MYSQL_APP_LABEL"
+    project: "$PROJECT_LABEL"
+    version: "$VERSION_LABEL"
+spec:
+  selector:
+    matchLabels: *wordpress-mysql
+  serviceName: mysql
+  replicas: $MYSQL_DEPLOY_REPLICA_COUNT
+  template:
+    metadata:
+      labels: *wordpress-mysql
+    spec:
+      containers:
+      - name: "$MYSQL_CONTAINER_NAME"
+        image: "$MYSQL_CONTAINER_IMAGE"
+        envFrom:
+        - configMapRef:
+            name: mysql
+        ports:
+        - containerPort: $MYSQL_CONTAINER_PORT_NUMBER
+          name: $MYSQL_CONTAINER_PORT_NAME
+        volumeMounts:
+        - name: "$MYSQL_VOLUME_NAME"
+          mountPath: "$MYSQL_VOLUME_MOUNTS_PATH"
+  volumeClaimTemplates:
+  - metadata:
+      name: "$MYSQL_VOLUME_NAME"
+    spec:
+      storageClassName: "$MYSQL_PVC_STORAGE_CLASS"
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: "$MYSQL_PVC_SIZE"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels: &wordpress-mysql
+    app: mysql
+    project: wordpress
+spec:
+  selector: *wordpress-mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+data:
+  MYSQL_DATABASE: wordpress
+  MYSQL_USER: admin
+  MYSQL_PASSWORD: password
+  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+

@@ -1,0 +1,11 @@
+grafana:
+  enabled: false
+alertmanager:
+  enabled: false
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs: |
+      - job_name: 'ui'
+        static_configs:
+          - targets:
+            - 'ui.default.svc.cluster.local:9292'

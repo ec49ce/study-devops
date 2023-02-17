@@ -1,0 +1,18 @@
+zabbixProxy:
+  env:
+    - name: ZBX_PROXYMODE
+      value: 0
+    - name: ZBX_HOSTNAME
+      value: zabbix-proxy
+    - name: ZBX_SERVER_HOST
+      value: "zabbix-zabbix-server"
+    - name: ZBX_SERVER_PORT
+      value: 10051
+    - name: ZBX_DEBUGLEVEL
+      value: 3
+    - name: ZBX_CACHESIZE
+      value: 128M
+    - name: ZBX_JAVAGATEWAY_ENABLE
+      value: false
+    - name: ZBX_CONFIGFREQUENCY
+      value: 60

@@ -1,0 +1,12 @@
+service:
+  type: "NodePort"
+  nodePorts:
+    http: "30100"
+persistence:
+  storageClass: "local-disk"
+mariadb:
+  primary:
+    persistence:
+      storageClass: "local-disk"
+      accessModes:
+        - ReadWriteOnce

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comment
+spec:
+  selector:
+    matchLabels:
+      app: comment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: comment
+    spec:
+      imagePullSecrets:
+      - name: ${GITHUB_REGISTRY_SECRET}
+      containers:
+      - name: comment
+        image: ${REGISTRY}/comment:${RELEASE_VER}
+        envFrom:
+          - configMapRef:
+              name: comment
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 9292

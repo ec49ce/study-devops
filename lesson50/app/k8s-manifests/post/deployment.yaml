@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post
+spec:
+  selector:
+    matchLabels:
+      app: post
+  template:
+    metadata:
+      labels:
+        app: post
+    spec:
+      imagePullSecrets:
+      - name: ${GITHUB_REGISTRY_SECRET}
+      containers:
+      - name: post
+        image: ${REGISTRY}/post:${RELEASE_VER}
+        envFrom:
+          - configMapRef:
+              name: post
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 5000

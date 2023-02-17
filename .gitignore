@@ -1,0 +1,13 @@
+# terraform
+.terraform
+terraform.tfstate*
+
+# creds
+set_cred_env.sh
+.dockerconfigjson
+
+# logs
+*.log
+
+# builds
+build*

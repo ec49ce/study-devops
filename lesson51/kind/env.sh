@@ -1,0 +1,6 @@
+#! /bin/env bash
+
+export DOCKER_HOST_IP="172.31.30.8"
+export DOCKER_HOST_EXTERNAL_IP="35.158.241.210"
+export POD_SUBNET="10.240.0.0/16"
+export SERVICE_SUBNET="10.0.0.0/16"

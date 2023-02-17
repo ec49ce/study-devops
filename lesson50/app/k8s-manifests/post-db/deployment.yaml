@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-db
+spec:
+  selector:
+    matchLabels:
+      app: post-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: post-db
+    spec:
+      containers:
+      - name: post-db
+        image: mongo:3.2
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-contant
+          mountPath: /data/db
+      volumes:
+      - name: mongo-contant
+        emptyDir: {}
